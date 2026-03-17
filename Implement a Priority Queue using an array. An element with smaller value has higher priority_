@@ -1,0 +1,89 @@
+#include <stdio.h>
+#define MAX 100
+
+int pq[MAX];
+int size = 0;
+
+// Insert element
+void insert(int value) {
+    if (size == MAX) {
+        printf("Queue Overflow\n");
+        return;
+    }
+    pq[size] = value;
+    size++;
+}
+
+// Delete highest priority (smallest element)
+int deleteMin() {
+    if (size == 0) {
+        printf("Queue Underflow\n");
+        return -1;
+    }
+
+    int minIndex = 0;
+
+    // Find index of smallest element
+    for (int i = 1; i < size; i++) {
+        if (pq[i] < pq[minIndex]) {
+            minIndex = i;
+        }
+    }
+
+    int minValue = pq[minIndex];
+
+    // Shift elements left
+    for (int i = minIndex; i < size - 1; i++) {
+        pq[i] = pq[i + 1];
+    }
+
+    size--;
+
+    return minValue;
+}
+
+// Display queue
+void display() {
+    if (size == 0) {
+        printf("Queue is empty\n");
+        return;
+    }
+
+    printf("Queue elements: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", pq[i]);
+    }
+    printf("\n");
+}
+
+// Main function
+int main() {
+    int n, m, x;
+
+    // Input number of elements
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    // Insert elements
+    printf("Enter elements:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &x);
+        insert(x);
+    }
+
+    // Input number of deletions
+    printf("Enter number of deletions: ");
+    scanf("%d", &m);
+
+    // Perform deletions
+    for (int i = 0; i < m; i++) {
+        int val = deleteMin();
+        if (val != -1)
+            printf("Deleted element: %d\n", val);
+    }
+
+    // Final queue
+    display();
+
+    return 0;
+}

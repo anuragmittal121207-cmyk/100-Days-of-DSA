@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+// Comparison function for qsort
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+void findClosestToZero(int arr[], int n) {
+    // Step 1: Sort the array
+    qsort(arr, n, sizeof(int), compare);
+
+    int left = 0;
+    int right = n - 1;
+
+    int minSum = INT_MAX;
+    int num1 = 0, num2 = 0;
+
+    while (left < right) {
+        int sum = arr[left] + arr[right];
+
+        if (abs(sum) < abs(minSum)) {
+            minSum = sum;
+            num1 = arr[left];
+            num2 = arr[right];
+        }
+
+        if (sum < 0)
+            left++;
+        else
+            right--;
+    }
+
+    printf("Two elements closest to zero: %d and %d\n", num1, num2);
+    printf("Their sum: %d\n", minSum);
+}
+
+int main() {
+    int n;
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    int arr[n];
+    printf("Enter elements:\n");
+
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    findClosestToZero(arr, n);
+
+    return 0;
+}

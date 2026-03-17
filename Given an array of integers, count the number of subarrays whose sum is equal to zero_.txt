@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void* a, const void* b) {
+    if (*(long long*)a > *(long long*)b) return 1;
+    if (*(long long*)a < *(long long*)b) return -1;
+    return 0;
+}
+
+int main() {
+    int n;
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    int arr[n];
+    printf("Enter elements:\n");
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    long long prefix[n + 1];
+    prefix[0] = 0;
+
+    for(int i = 0; i < n; i++) {
+        prefix[i + 1] = prefix[i] + arr[i];
+    }
+
+    // Sort prefix array
+    qsort(prefix, n + 1, sizeof(long long), compare);
+
+    long long count = 0;
+    long long freq = 1;
+
+    for(int i = 1; i <= n; i++) {
+        if(prefix[i] == prefix[i - 1]) {
+            freq++;
+        } else {
+            count += (freq * (freq - 1)) / 2;
+            freq = 1;
+        }
+    }
+
+    count += (freq * (freq - 1)) / 2;
+
+    printf("Number of zero sum subarrays: %lld\n", count);
+
+    return 0;
+}
