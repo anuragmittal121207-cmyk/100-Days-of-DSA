@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* head = NULL;
+
+// Insert at end
+void insert(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if(head == NULL) {
+        head = newNode;
+        return;
+    }
+
+    struct Node* temp = head;
+
+    while(temp->next != NULL)
+        temp = temp->next;
+
+    temp->next = newNode;
+}
+
+// Rotate list right by k
+void rotate(int k) {
+
+    if(head == NULL || head->next == NULL)
+        return;
+
+    struct Node *temp = head;
+    int length = 1;
+
+    while(temp->next != NULL) {
+        temp = temp->next;
+        length++;
+    }
+
+    k = k % length;
+    if(k == 0)
+        return;
+
+    temp->next = head;  // make circular
+
+    int steps = length - k;
+    struct Node* newTail = head;
+
+    for(int i = 1; i < steps; i++)
+        newTail = newTail->next;
+
+    head = newTail->next;
+    newTail->next = NULL;
+}
+
+// Display list
+void display() {
+    struct Node* temp = head;
+
+    while(temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+}
+
+int main() {
+
+    int n, value, k;
+
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+
+    for(int i = 0; i < n; i++) {
+        printf("Enter value: ");
+        scanf("%d", &value);
+        insert(value);
+    }
+
+    printf("Enter k: ");
+    scanf("%d", &k);
+
+    rotate(k);
+
+    printf("Rotated Linked List: ");
+    display();
+
+    return 0;
+}
