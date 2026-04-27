@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+// Tree node
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to convert to mirror
+struct Node* mirror(struct Node* root) {
+    if (root == NULL)
+        return NULL;
+
+    // Swap left and right
+    struct Node* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
+
+    // Recur for children
+    mirror(root->left);
+    mirror(root->right);
+
+    return root;
+}

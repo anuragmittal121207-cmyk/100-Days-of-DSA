@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Tree Node
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Create Node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Zigzag Traversal
+void zigzagTraversal(struct Node* root) {
+    if (root == NULL) return;
+
+    struct Node* queue[100];
+    int front = 0, rear = 0;
+
+    queue[rear++] = root;
+
+    int leftToRight = 1;
+
+    while (front < rear) {
+        int size = rear - front;
+
+        int level[100]; // temporary array
+
+        for (int i = 0; i < size; i++) {
+            struct Node* curr = queue[front++];
+
+            // store in correct direction
+            int index = leftToRight ? i : (size - 1 - i);
+            level[index] = curr->data;
+
+            if (curr->left)
+                queue[rear++] = curr->left;
+
+            if (curr->right)
+                queue[rear++] = curr->right;
+        }
+
+        // print current level
+        for (int i = 0; i < size; i++) {
+            printf("%d ", level[i]);
+        }
+        printf("\n");
+
+        // change direction
+        leftToRight = !leftToRight;
+    }
+}
+
+// Main
+int main() {
+    /*
+            3
+           / \
+          9   20
+             /  \
+            15   7
+    */
+
+    struct Node* root = createNode(3);
+    root->left = createNode(9);
+    root->right = createNode(20);
+    root->right->left = createNode(15);
+    root->right->right = createNode(7);
+
+    zigzagTraversal(root);
+
+    return 0;
+}
