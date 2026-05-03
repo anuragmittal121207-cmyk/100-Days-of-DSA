@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+
+#define MAX 1000
+
+// Edge structure
+typedef struct {
+    int to, weight;
+} Edge;
+
+// Adjacency list
+typedef struct {
+    Edge* edges;
+    int size;
+} AdjList;
+
+// Min Heap
+typedef struct {
+    int node, weight;
+} HeapNode;
+
+HeapNode heap[MAX * MAX];
+int heapSize = 0;
+
+// Swap
+void swap(HeapNode* a, HeapNode* b) {
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Push into heap
+void push(int node, int weight) {
+    heap[++heapSize] = (HeapNode){node, weight};
+    int i = heapSize;
+
+    while (i > 1 && heap[i].weight < heap[i / 2].weight) {
+        swap(&heap[i], &heap[i / 2]);
+        i /= 2;
+    }
+}
+
+// Pop min
+HeapNode pop() {
+    HeapNode minNode = heap[1];
+    heap[1] = heap[heapSize--];
+
+    int i = 1;
+    while (1) {
+        int left = 2 * i, right = 2 * i + 1, smallest = i;
+
+        if (left <= heapSize && heap[left].weight < heap[smallest].weight)
+            smallest = left;
+        if (right <= heapSize && heap[right].weight < heap[smallest].weight)
+            smallest = right;
+
+        if (smallest == i) break;
+
+        swap(&heap[i], &heap[smallest]);
+        i = smallest;
+    }
+
+    return minNode;
+}
+
+// Prim’s MST
+int primMST(int n, AdjList* graph) {
+    bool visited[MAX] = {false};
+
+    int totalWeight = 0;
+
+    push(0, 0);  // start from node 0
+
+    while (heapSize > 0) {
+        HeapNode curr = pop();
+
+        int u = curr.node;
+        int w = curr.weight;
+
+        if (visited[u]) continue;
+
+        visited[u] = true;
+        totalWeight += w;
+
+        for (int i = 0; i < graph[u].size; i++) {
+            int v = graph[u].edges[i].to;
+            int wt = graph[u].edges[i].weight;
+
+            if (!visited[v]) {
+                push(v, wt);
+            }
+        }
+    }
+
+    return totalWeight;
+}
+
+int main() {
+    int n = 4;
+
+    AdjList graph[MAX];
+
+    // Allocate edges manually
+    for (int i = 0; i < n; i++) {
+        graph[i].edges = malloc(10 * sizeof(Edge));
+        graph[i].size = 0;
+    }
+
+    // Add edges (undirected)
+    graph[0].edges[graph[0].size++] = (Edge){1, 10};
+    graph[1].edges[graph[1].size++] = (Edge){0, 10};
+
+    graph[0].edges[graph[0].size++] = (Edge){2, 6};
+    graph[2].edges[graph[2].size++] = (Edge){0, 6};
+
+    graph[0].edges[graph[0].size++] = (Edge){3, 5};
+    graph[3].edges[graph[3].size++] = (Edge){0, 5};
+
+    graph[1].edges[graph[1].size++] = (Edge){3, 15};
+    graph[3].edges[graph[3].size++] = (Edge){1, 15};
+
+    graph[2].edges[graph[2].size++] = (Edge){3, 4};
+    graph[3].edges[graph[3].size++] = (Edge){2, 4};
+
+    printf("MST Total Weight: %d\n", primMST(n, graph));
+
+    return 0;
+}

@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+// Function to find first repeated character
+char firstRepeated(char *s) {
+    int visited[26] = {0};
+
+    for (int i = 0; s[i] != '\0'; i++) {
+        int idx = s[i] - 'a';
+
+        if (visited[idx] == 1) {
+            return s[i];   // second occurrence found
+        }
+
+        visited[idx] = 1;
+    }
+
+    return '\0';  // no repeated character
+}
+
+int main() {
+    char s[100];
+
+    printf("Enter string: ");
+    scanf("%s", s);
+
+    char result = firstRepeated(s);
+
+    if (result != '\0') {
+        printf("First repeated character: %c\n", result);
+    } else {
+        printf("No repeated character found\n");
+    }
+
+    return 0;
+}

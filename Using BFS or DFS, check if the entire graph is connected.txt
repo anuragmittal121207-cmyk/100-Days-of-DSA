@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 100
+
+void dfs(int adj[MAX][MAX], int n, int node, bool visited[]) {
+    visited[node] = true;
+
+    for (int i = 0; i < n; i++) {
+        if (adj[node][i] == 1 && !visited[i]) {
+            dfs(adj, n, i, visited);
+        }
+    }
+}
+
+bool isConnected(int adj[MAX][MAX], int n) {
+    bool visited[MAX] = {false};
+
+    // Start DFS from node 0
+    dfs(adj, n, 0, visited);
+
+    // Check if all visited
+    for (int i = 0; i < n; i++) {
+        if (!visited[i])
+            return false;
+    }
+
+    return true;
+}
+
+int main() {
+    int n = 4;
+
+    int adj[MAX][MAX] = {
+        {1,1,0,0},
+        {1,1,1,0},
+        {0,1,1,1},
+        {0,0,1,1}
+    };
+
+    if (isConnected(adj, n))
+        printf("Graph is connected\n");
+    else
+        printf("Graph is not connected\n");
+
+    return 0;
+}

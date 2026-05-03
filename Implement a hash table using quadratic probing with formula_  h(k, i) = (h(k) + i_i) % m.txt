@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 10
+
+int table[SIZE];
+
+// Initialize table
+void init() {
+    for (int i = 0; i < SIZE; i++)
+        table[i] = -1;   // -1 means empty
+}
+
+// Hash function
+int hash(int key) {
+    return key % SIZE;
+}
+
+// Insert using quadratic probing
+void insert(int key) {
+    int h = hash(key);
+
+    for (int i = 0; i < SIZE; i++) {
+        int index = (h + i * i) % SIZE;
+
+        if (table[index] == -1) {
+            table[index] = key;
+            printf("Inserted %d at index %d\n", key, index);
+            return;
+        }
+    }
+
+    printf("Hash table is full, cannot insert %d\n", key);
+}
+
+// Search
+int search(int key) {
+    int h = hash(key);
+
+    for (int i = 0; i < SIZE; i++) {
+        int index = (h + i * i) % SIZE;
+
+        if (table[index] == key)
+            return index;
+
+        if (table[index] == -1)
+            return -1;
+    }
+
+    return -1;
+}
+
+// Display table
+void display() {
+    printf("\nHash Table:\n");
+    for (int i = 0; i < SIZE; i++) {
+        if (table[i] == -1)
+            printf("%d: EMPTY\n", i);
+        else
+            printf("%d: %d\n", i, table[i]);
+    }
+}
+
+int main() {
+    init();
+
+    insert(10);
+    insert(20);
+    insert(30);
+    insert(25);
+    insert(35);
+
+    display();
+
+    int key = 25;
+    int pos = search(key);
+
+    if (pos != -1)
+        printf("\nKey %d found at index %d\n", key, pos);
+    else
+        printf("\nKey %d not found\n", key);
+
+    return 0;
+}

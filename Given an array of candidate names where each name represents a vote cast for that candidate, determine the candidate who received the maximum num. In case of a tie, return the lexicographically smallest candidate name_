@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 100
+#define LEN 50
+
+typedef struct {
+    char name[LEN];
+    int count;
+} Candidate;
+
+int findIndex(Candidate arr[], int size, char name[]) {
+    for (int i = 0; i < size; i++) {
+        if (strcmp(arr[i].name, name) == 0)
+            return i;
+    }
+    return -1;
+}
+
+void findWinner(char votes[][LEN], int n) {
+    Candidate candidates[MAX];
+    int size = 0;
+
+    // Step 1: Count votes
+    for (int i = 0; i < n; i++) {
+        int idx = findIndex(candidates, size, votes[i]);
+
+        if (idx == -1) {
+            strcpy(candidates[size].name, votes[i]);
+            candidates[size].count = 1;
+            size++;
+        } else {
+            candidates[idx].count++;
+        }
+    }
+
+    // Step 2: Find winner
+    char winner[LEN];
+    int maxVotes = -1;
+
+    for (int i = 0; i < size; i++) {
+        if (candidates[i].count > maxVotes ||
+           (candidates[i].count == maxVotes &&
+            strcmp(candidates[i].name, winner) < 0)) {
+
+            maxVotes = candidates[i].count;
+            strcpy(winner, candidates[i].name);
+        }
+    }
+
+    printf("Winner: %s (Votes: %d)\n", winner, maxVotes);
+}
+
+int main() {
+    char votes[][LEN] = {"john", "john", "mary", "mary", "alice"};
+    int n = sizeof(votes) / sizeof(votes[0]);
+
+    findWinner(votes, n);
+
+    return 0;
+}

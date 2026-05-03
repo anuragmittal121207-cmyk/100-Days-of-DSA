@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+// Node structure
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+
+// Stack
+int stack[MAX];
+int top = -1;
+
+void push(int v) {
+    stack[++top] = v;
+}
+
+// Create node
+struct Node* createNode(int v) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Add edge (directed)
+void addEdge(struct Node** adj, int src, int dest) {
+    struct Node* newNode = createNode(dest);
+    newNode->next = adj[src];
+    adj[src] = newNode;
+}
+
+// DFS function
+void dfs(struct Node** adj, int* visited, int v) {
+    visited[v] = 1;
+
+    struct Node* temp = adj[v];
+
+    while (temp) {
+        if (!visited[temp->vertex]) {
+            dfs(adj, visited, temp->vertex);
+        }
+        temp = temp->next;
+    }
+
+    // push after visiting all neighbors
+    push(v);
+}
+
+// Topological sort
+void topoSort(struct Node** adj, int V) {
+    int visited[MAX] = {0};
+
+    for (int i = 0; i < V; i++) {
+        if (!visited[i]) {
+            dfs(adj, visited, i);
+        }
+    }
+
+    printf("Topological Order: ");
+    while (top != -1) {
+        printf("%d ", stack[top--]);
+    }
+}
+
+// Main
+int main() {
+    int V = 6;
+
+    struct Node** adj = (struct Node**)malloc(V * sizeof(struct Node*));
+    for (int i = 0; i < V; i++)
+        adj[i] = NULL;
+
+    // Example DAG
+    addEdge(adj, 5, 2);
+    addEdge(adj, 5, 0);
+    addEdge(adj, 4, 0);
+    addEdge(adj, 4, 1);
+    addEdge(adj, 2, 3);
+    addEdge(adj, 3, 1);
+
+    topoSort(adj, V);
+
+    return 0;
+}

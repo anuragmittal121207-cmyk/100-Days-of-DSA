@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+// Node structure
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+
+// Create node
+struct Node* createNode(int v) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// DFS function
+int dfsCycle(struct Node** adj, int* visited, int* recStack, int curr) {
+    visited[curr] = 1;
+    recStack[curr] = 1;
+
+    struct Node* temp = adj[curr];
+
+    while (temp) {
+        int neighbor = temp->vertex;
+
+        // If not visited → recurse
+        if (!visited[neighbor]) {
+            if (dfsCycle(adj, visited, recStack, neighbor))
+                return 1;
+        }
+        // If in recursion stack → cycle
+        else if (recStack[neighbor]) {
+            return 1;
+        }
+
+        temp = temp->next;
+    }
+
+    recStack[curr] = 0; // backtrack
+    return 0;
+}
+
+// Main cycle check
+int hasCycle(struct Node** adj, int V) {
+    int* visited = (int*)calloc(V, sizeof(int));
+    int* recStack = (int*)calloc(V, sizeof(int));
+
+    for (int i = 0; i < V; i++) {
+        if (!visited[i]) {
+            if (dfsCycle(adj, visited, recStack, i))
+                return 1;
+        }
+    }
+
+    return 0;
+}
